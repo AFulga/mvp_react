@@ -1,0 +1,58 @@
+body {
+  background: -webkit-linear-gradient(top, #b3b3b0 0%, #e3e2dd 500px);
+  background-color: #e3e2dd;
+  background-repeat: no-repeat;
+}
+
+.cert-runtime-genre,
+.outline,
+.txt-block {
+  font-size: 11px;
+  color: #666666;
+}
+
+.txt-block {
+  margin: 0.35em 0;
+}
+
+#root {
+  max-width: 700px;
+}
+
+.odd {
+  background-color: #f6f6f5;
+  border: #fff 1px solid;
+}
+
+.even {
+  background-color: #fbfbfb;
+  border: #fff 1px solid;
+}
+
+h4 {
+  color: #666666;
+  font-size: 13px;
+  margin: 0.35em 0 0.25em;
+  padding: 0;
+  color: #136cb2;
+}
+
+h5 {
+  font-size: 11px;
+  color: #666;
+  margin: 0;
+  padding: 0;
+}
+
+h5.inline {
+  display: inline;
+  padding: 0 0.5em 0 0;
+}
+
+.txt-block span {
+  color: #136cb2;
+}
+
+:root {
+  font-family: Verdana, Arial, sans-serif;
+}
