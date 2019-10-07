@@ -15,17 +15,20 @@ class Search extends React.Component {
 
   handleEnter = e => {
     if (e.key === 'Enter') {
-      this.props.searchResult(this.state.searchTitle);
+      const { searchResult, fetchPage, apiKey } = this.props;
+      searchResult(this.state.searchTitle, fetchPage, apiKey);
     }
   };
   render() {
-    const { searchResult } = this.props;
+    const { searchResult, page, apiKey } = this.props;
     const { searchTitle } = this.state;
     return (
       <div className='input-group md-form form-sm form-1 pl-0'>
         <div className='input-group-prepend'>
           <span
-            onClick={() => searchResult(searchTitle)}
+            onClick={() => {
+              searchResult(searchTitle, page, apiKey);
+            }}
             className='input-group-text cyan lighten-2'
             id='basic-text1'
           >

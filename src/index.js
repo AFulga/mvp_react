@@ -8,17 +8,17 @@ import Thumbnail from './Thumbnail';
 import FormError from './FormError';
 import Search from './Search';
 
-function Movies({ searchList, addToFavorites, favoriteList, isFavoritePage }) {
-  const movies = isFavoritePage ? favoriteList : searchList;
-  return movies.map((movie, index) => {
-    console.log(movie.imdbID);
+const API_KEY = '1e571b63';
+
+function Movies({ movieList, addToFavorites, checkFavoritesList }) {
+  return movieList.map((movie, index) => {
     return (
       <Thumbnail
         key={movie.imdbID}
         movie={movie}
         className={index % 2 ? 'odd' : 'even'}
         addToFavorites={addToFavorites}
-        favoriteList={favoriteList}
+        checkFavoritesList={checkFavoritesList}
       />
     );
   });
@@ -38,13 +38,20 @@ class Mvp extends React.Component {
     favoriteList: [],
     errorMessage: '',
     totalResults: 0,
-    isFavoritePage: true
+    isFavoritePage: true,
+    fetchPage: 1,
+    itemsPerPage: 10,
+    currentSearchPage: 1,
+    currentFavoritesPage: 1
   };
-  searchResult = async title => {
+  checkFavoritesList = imdbID =>
+    this.state.favoriteList.some(movie => movie.imdbID === imdbID);
+  searchResult = async (title, fetchPage, apiKey) => {
     const moviesReturned = await fetch(
-      `https://www.omdbapi.com/?apikey=1e571b63&s=${formatTitle(title)}`
+      `https://www.omdbapi.com/?apikey=${apiKey}&s=${formatTitle(
+        title
+      )}&page=${fetchPage}`
     ).then(resp => resp.json());
-    console.log(moviesReturned);
     const { Response, Search, totalResults, Error } = moviesReturned;
     const moviesWithDetails =
       Response === 'True'
@@ -52,7 +59,7 @@ class Mvp extends React.Component {
             Search.map(
               async item =>
                 await (await fetch(
-                  `https://www.omdbapi.com/?apikey=1e571b63&i=${item.imdbID}`
+                  `https://www.omdbapi.com/?apikey=${apiKey}&i=${item.imdbID}`
                 )).json()
             )
           )
@@ -92,12 +99,16 @@ class Mvp extends React.Component {
       totalResults,
       errorMessage,
       favoriteList,
-      isFavoritePage
+      isFavoritePage,
+      fetchPage
     } = this.state;
-    console.log('currentSearch', currentSearch);
     return (
       <>
-        <Search searchResult={this.searchResult} />
+        <Search
+          searchResult={this.searchResult}
+          apiKey={API_KEY}
+          fetchPage={fetchPage}
+        />
         <div className='text-center mt-2'>
           <button
             className={`btn btn-sm btn-outline-warning mr-1 h-auto mt-auto mb-auto cursor-pointer font-weight-bold 
@@ -115,9 +126,9 @@ class Mvp extends React.Component {
         {totalResults ? (
           <div className='mt-1 App rounded pt-1 pr-3 pl-3 pb-3'>
             <Movies
-              searchList={isFavoritePage ? favoriteList : currentSearch}
+              movieList={isFavoritePage ? favoriteList : currentSearch}
               addToFavorites={this.addToFavorites}
-              favoriteList={favoriteList}
+              checkFavoritesList={this.checkFavoritesList}
             />
           </div>
         ) : null}

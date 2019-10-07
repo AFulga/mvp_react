@@ -4,8 +4,6 @@ import logo from './poster-placeholder.png';
 import { GoTrashcan, GoStar, GoMail } from 'react-icons/go';
 
 class Thumbnail extends Component {
-  checkFavoritesList = imdbID =>
-    this.props.favoriteList.some(movie => movie.imdbID === imdbID);
   render() {
     const {
       Poster,
@@ -18,7 +16,7 @@ class Thumbnail extends Component {
       imdbID,
       Plot
     } = this.props.movie;
-    console.log('props', this.props);
+    //console.log('props', this.props);
     return (
       <div className={`img-container p-2 ${this.props.className}`}>
         <div className='col-4 d-inline-block m-0'>
@@ -32,12 +30,14 @@ class Thumbnail extends Component {
           <div className='col-12 position-absolute text-black-50 text-right'>
             <FaStar
               title={
-                this.checkFavoritesList(imdbID)
+                this.props.checkFavoritesList(imdbID)
                   ? 'Remove from favorites'
                   : 'Add to favorites'
               }
               style={{ cursor: 'pointer' }}
-              className={this.checkFavoritesList(imdbID) ? 'text-warning' : ''}
+              className={
+                this.props.checkFavoritesList(imdbID) ? 'text-warning' : ''
+              }
               onClick={() => this.props.addToFavorites(imdbID)}
             />
           </div>
