@@ -63,6 +63,12 @@ class Thumbnail extends Component {
             <h5 className='inline font-weight-bold'>Stars:</h5>
             <span>{Actors}</span>
           </div>
+          <button
+            className='btn btn-sm btn-outline-warning badge-dark badge'
+            onClick={() => this.props.handleModalClick(this.props.movie)}
+          >
+            {this.props.children}
+          </button>
         </div>
       </div>
     );

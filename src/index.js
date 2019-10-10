@@ -7,29 +7,60 @@ import * as serviceWorker from './serviceWorker';
 import Thumbnail from './Thumbnail';
 import FormError from './FormError';
 import Search from './Search';
+import { FaArrowCircleRight, FaArrowCircleLeft } from 'react-icons/fa';
+import Modal from './Modal';
 
 const API_KEY = '1e571b63';
+const modalRoot = document.getElementById('modal-root');
 
-function Movies({ movieList, addToFavorites, checkFavoritesList }) {
+function Movies({
+  movieList,
+  addToFavorites,
+  checkFavoritesList,
+  handleModalClick,
+  className,
+  children
+}) {
   return movieList.map((movie, index) => {
     return (
       <Thumbnail
         key={movie.imdbID}
         movie={movie}
-        className={index % 2 ? 'odd' : 'even'}
+        className={`${index % 2 ? 'odd' : 'even'} ${className}`}
         addToFavorites={addToFavorites}
         checkFavoritesList={checkFavoritesList}
-      />
+        handleModalClick={handleModalClick}
+      >
+        {children}
+      </Thumbnail>
     );
   });
 }
 
 function formatTitle(title) {
-  return title
-    .split(' ')
-    .join('+')
-    .split('&')
-    .join('%26');
+  return title.split('&').join('%26');
+}
+
+async function fetchResult(title, fetchPage, apiKey) {
+  const moviesReturned = await fetch(
+    `https://www.omdbapi.com/?apikey=${apiKey}&s=${formatTitle(
+      title
+    )}&page=${fetchPage}`
+  ).then(resp => resp.json());
+  const { Response, Search, totalResults, Error } = moviesReturned;
+  const moviesWithDetails =
+    Response === 'True'
+      ? await Promise.all(
+          Search.map(
+            async item =>
+              await (await fetch(
+                `https://www.omdbapi.com/?apikey=${apiKey}&i=${item.imdbID}`
+              )).json()
+          )
+        )
+      : [];
+
+  return { Response, totalResults, Error, moviesWithDetails };
 }
 
 class Mvp extends React.Component {
@@ -42,31 +73,34 @@ class Mvp extends React.Component {
     fetchPage: 1,
     itemsPerPage: 10,
     currentSearchPage: 1,
-    currentFavoritesPage: 1
+    currentFavoritesPage: 1,
+    showModal: false,
+    clickedMovie: []
   };
+
   checkFavoritesList = imdbID =>
     this.state.favoriteList.some(movie => movie.imdbID === imdbID);
-  searchResult = async (title, fetchPage, apiKey) => {
-    const moviesReturned = await fetch(
-      `https://www.omdbapi.com/?apikey=${apiKey}&s=${formatTitle(
-        title
-      )}&page=${fetchPage}`
-    ).then(resp => resp.json());
-    const { Response, Search, totalResults, Error } = moviesReturned;
-    const moviesWithDetails =
-      Response === 'True'
-        ? await Promise.all(
-            Search.map(
-              async item =>
-                await (await fetch(
-                  `https://www.omdbapi.com/?apikey=${apiKey}&i=${item.imdbID}`
-                )).json()
-            )
-          )
-        : [];
+
+  searchResult = async (title, fetchPage, apiKey, isNewPage) => {
+    const {
+      Response,
+      totalResults,
+      Error,
+      moviesWithDetails
+    } = await fetchResult(title, fetchPage, apiKey);
+
+    /*const {itemsPerPage, totalResults, currentSearch} = this.state;
+    if ( itemsPerPage < totalResults && itemsPerPage < currentSearch.length) {
+      
+    }*/
 
     this.setState({
-      currentSearch: Response === 'True' ? moviesWithDetails : [],
+      currentSearch:
+        Response === 'True'
+          ? isNewPage
+            ? this.state.currentSearch.concat(moviesWithDetails)
+            : moviesWithDetails
+          : [],
       errorMessage: Response === 'True' ? '' : Error,
       totalResults: Response === 'True' ? totalResults : 0,
       isFavoritePage: false
@@ -84,15 +118,35 @@ class Mvp extends React.Component {
               currentSearch.find(item => item.imdbID === imdbID)
             ]
       },
-      this.changePage
+      this.changeListShown
     );
   };
 
-  changePage = () =>
+  changeListShown = () =>
     this.setState({
       isFavoritePage:
         this.state.favoriteList.length === 0 ? false : this.state.isFavoritePage
     });
+
+  setPageNumber = p => {
+    const {
+      isFavoritePage,
+      currentSearchPage,
+      currentFavoritesPage
+    } = this.state;
+    const page = isFavoritePage ? currentFavoritesPage : currentSearchPage;
+    this.setState({
+      [isFavoritePage ? 'currentFavoritesPage' : 'currentSearchPage']: page + p
+    });
+  };
+
+  handleModalClick = movie => {
+    console.log('movie', new Array(movie));
+    this.setState({
+      showModal: !this.state.showModal,
+      clickedMovie: movie ? new Array(movie) : []
+    });
+  };
   render() {
     const {
       currentSearch,
@@ -100,10 +154,31 @@ class Mvp extends React.Component {
       errorMessage,
       favoriteList,
       isFavoritePage,
-      fetchPage
+      fetchPage,
+      currentSearchPage,
+      currentFavoritesPage,
+      showModal,
+      clickedMovie
     } = this.state;
+    const page = isFavoritePage ? currentFavoritesPage : currentSearchPage;
+
     return (
       <>
+        {showModal ? (
+          <Modal handleModalClick={this.handleModalClick} modalRoot={modalRoot}>
+            <div className='modal'>
+              <Movies
+                movieList={clickedMovie}
+                addToFavorites={this.addToFavorites}
+                checkFavoritesList={this.checkFavoritesList}
+                handleModalClick={this.handleModalClick}
+                className='w-100'
+              >
+                Close
+              </Movies>
+            </div>
+          </Modal>
+        ) : null}
         <Search
           searchResult={this.searchResult}
           apiKey={API_KEY}
@@ -123,13 +198,26 @@ class Mvp extends React.Component {
             {isFavoritePage ? 'Show search list' : 'Show favorites list'}
           </button>
         </div>
+
         {totalResults ? (
           <div className='mt-1 App rounded pt-1 pr-3 pl-3 pb-3'>
+            <div className='col-12 text-center mb-2 text-light '>
+              <span className={`col-4 ${page === 1 ? 'invisible' : 'visible'}`}>
+                <FaArrowCircleLeft onClick={() => this.setPageNumber(-1)} />
+              </span>
+              <div className='col-4 d-inline-block'>{page}</div>
+              <span className='col-4'>
+                <FaArrowCircleRight onClick={() => this.setPageNumber(1)} />
+              </span>
+            </div>
             <Movies
               movieList={isFavoritePage ? favoriteList : currentSearch}
               addToFavorites={this.addToFavorites}
               checkFavoritesList={this.checkFavoritesList}
-            />
+              handleModalClick={this.handleModalClick}
+            >
+              Show details
+            </Movies>
           </div>
         ) : null}
         {errorMessage ? <FormError theMessage={errorMessage} /> : null}
