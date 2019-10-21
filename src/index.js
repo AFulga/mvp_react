@@ -7,7 +7,13 @@ import * as serviceWorker from './serviceWorker';
 import Thumbnail from './Thumbnail';
 import FormError from './FormError';
 import Search from './Search';
-import { FaArrowCircleRight, FaArrowCircleLeft } from 'react-icons/fa';
+import {
+  FaArrowCircleRight,
+  FaArrowCircleLeft,
+  FaClipboardList,
+  FaTable,
+  FaAngellist
+} from 'react-icons/fa';
 import Modal from './Modal';
 
 const API_KEY = '1e571b63';
@@ -26,7 +32,9 @@ function Movies({
       <Thumbnail
         key={movie.imdbID}
         movie={movie}
-        className={`${index % 2 ? 'odd' : 'even'} ${className}`}
+        className={`${index % 2 ? 'odd' : 'even'} ${
+          className ? className : ''
+        }`}
         addToFavorites={addToFavorites}
         checkFavoritesList={checkFavoritesList}
         handleModalClick={handleModalClick}
@@ -75,7 +83,8 @@ class Mvp extends React.Component {
     currentSearchPage: 1,
     currentFavoritesPage: 1,
     showModal: false,
-    clickedMovie: []
+    clickedMovie: [],
+    toggleView: false
   };
 
   checkFavoritesList = imdbID =>
@@ -147,6 +156,12 @@ class Mvp extends React.Component {
       clickedMovie: movie ? new Array(movie) : []
     });
   };
+
+  changeView = () => {
+    this.setState({
+      toggleView: !this.state.toggleView
+    });
+  };
   render() {
     const {
       currentSearch,
@@ -158,7 +173,8 @@ class Mvp extends React.Component {
       currentSearchPage,
       currentFavoritesPage,
       showModal,
-      clickedMovie
+      clickedMovie,
+      toggleView
     } = this.state;
     const page = isFavoritePage ? currentFavoritesPage : currentSearchPage;
 
@@ -202,22 +218,44 @@ class Mvp extends React.Component {
         {totalResults ? (
           <div className='mt-1 App rounded pt-1 pr-3 pl-3 pb-3'>
             <div className='col-12 text-center mb-2 text-light '>
-              <span className={`col-4 ${page === 1 ? 'invisible' : 'visible'}`}>
+              <span
+                className={`col-4 cursor-pointer ${
+                  page === 1 ? 'invisible' : 'visible'
+                }`}
+              >
                 <FaArrowCircleLeft onClick={() => this.setPageNumber(-1)} />
               </span>
               <div className='col-4 d-inline-block'>{page}</div>
-              <span className='col-4'>
+              <span className='col-4  cursor-pointer '>
                 <FaArrowCircleRight onClick={() => this.setPageNumber(1)} />
               </span>
+
+              <span
+                className='float-right text-warning cursor-pointer btn badge text-light btn-outline-warning'
+                onClick={this.changeView}
+              >
+                {!toggleView ? (
+                  <FaTable title='Table view' />
+                ) : (
+                  <FaClipboardList title='List view' />
+                )}
+              </span>
             </div>
-            <Movies
-              movieList={isFavoritePage ? favoriteList : currentSearch}
-              addToFavorites={this.addToFavorites}
-              checkFavoritesList={this.checkFavoritesList}
-              handleModalClick={this.handleModalClick}
+            <div
+              className={
+                toggleView ? 'd-flex flex-wrap justify-content-around p-1' : ''
+              }
             >
-              Show details
-            </Movies>
+              <Movies
+                movieList={isFavoritePage ? favoriteList : currentSearch}
+                addToFavorites={this.addToFavorites}
+                checkFavoritesList={this.checkFavoritesList}
+                handleModalClick={this.handleModalClick}
+                className={toggleView ? 'w-49 mb-1' : ''}
+              >
+                Show details
+              </Movies>
+            </div>
           </div>
         ) : null}
         {errorMessage ? <FormError theMessage={errorMessage} /> : null}

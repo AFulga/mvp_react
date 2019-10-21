@@ -77,3 +77,11 @@ h5.inline {
 .modal .img-container {
   max-width: 600px !important;
 }
+
+.w-49 {
+  width: 49% !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
