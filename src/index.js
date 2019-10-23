@@ -59,7 +59,9 @@ async function fetchResult(title, fetchPage, apiKey) {
     `https://www.omdbapi.com/?apikey=${apiKey}&s=${formatTitle(
       title
     )}&page=${fetchPage}`
-  ).then(resp => resp.json());
+  )
+    .then(resp => resp.json())
+    .catch(err => console.error);
   const { Response, Search, totalResults, Error } = moviesReturned;
   const moviesWithDetails =
     Response === 'True'
@@ -68,7 +70,9 @@ async function fetchResult(title, fetchPage, apiKey) {
             async item =>
               await (await fetch(
                 `https://www.omdbapi.com/?apikey=${apiKey}&i=${item.imdbID}`
-              )).json()
+              ))
+                .json()
+                .catch(err => console.error)
           )
         )
       : [];
