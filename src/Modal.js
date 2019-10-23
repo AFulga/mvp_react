@@ -5,14 +5,7 @@ class Modal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.el = document.createElement(
-      'div'
-    ); /*(
-      <div className='modal'>
-        <p>My modal</p>
-        <button onClick={this.props.handleModalClick}>Close</button>
-      </div>
-    );*/
+    this.el = document.createElement('div');
   }
 
   componentDidMount = () => {

@@ -80,8 +80,25 @@ h5.inline {
 
 .w-49 {
   width: 49% !important;
+  min-width: 300px;
 }
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.cl-transition {
+  width: 100%;
+  transition: all 0.6s ease;
+}
+
+img {
+  max-height: 160px;
+  max-width: 160px;
+  width: auto;
+}
+
+.cl-star {
+  z-index: 999;
+  top: 0;
 }
