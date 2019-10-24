@@ -10,7 +10,11 @@ import {
   FaArrowCircleRight,
   FaArrowCircleLeft,
   FaClipboardList,
-  FaTable
+  FaTable,
+  FaList,
+  FaListAlt,
+  FaListUl,
+  FaListOl
 } from 'react-icons/fa';
 import Modal from './Modal';
 
@@ -290,9 +294,9 @@ class Mvp extends React.Component {
                     onClick={this.changeView}
                   >
                     {!toggleView ? (
-                      <FaTable title='Table view' />
+                      <FaTable title='Table view' className='svg-resize2' />
                     ) : (
-                      <FaClipboardList title='List view' />
+                      <FaList title='List view' className='svg-resize2' />
                     )}
                   </span>
                 </div>
@@ -304,11 +308,11 @@ class Mvp extends React.Component {
                 >
                   <FaArrowCircleLeft
                     onClick={() => this.setPageNumber(-1)}
-                    className='svg-resize'
+                    className='svg-resize button-shadow'
                   />
                 </div>
                 <div className='col-4 d-inline'>
-                  <span className='d-inline-block text-info btn btn-outline-light bg-light font-weight-bold p-0 pl-2 pr-2'>
+                  <span className='page-number d-inline-block text-info btn btn-outline-light bg-light font-weight-bold p-0 pl-2 pr-2'>
                     {page}
                   </span>
                 </div>
@@ -320,7 +324,7 @@ class Mvp extends React.Component {
                 >
                   <FaArrowCircleRight
                     onClick={() => this.setPageNumber(1)}
-                    className='svg-resize'
+                    className='svg-resize button-shadow'
                   />
                 </div>
               </div>

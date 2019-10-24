@@ -110,4 +110,21 @@ img {
 .svg-resize {
   width: 25px !important;
   height: auto !important;
+  border-bottom: 1px solid transparent;
+}
+
+.svg-resize2 {
+  width: 20px !important;
+  height: auto !important;
+}
+
+.page-number {
+  min-width: 37px;
+}
+
+.button-shadow:hover {
+  box-shadow: 0px 2px 3px 0px rgba(255, 193, 7, 0.75);
+  border-radius: 50%;
+  position: relative;
+  top: -0.5px;
 }
