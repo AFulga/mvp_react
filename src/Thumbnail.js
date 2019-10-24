@@ -60,40 +60,32 @@ class Thumbnail extends Component {
                 <h4>
                   {Title} ({Year})
                 </h4>
-                <p
-                  className={`${
-                    this.props.toggleView ? 'd-none' : ''
-                  } cert-runtime-genre`}
-                >
-                  <time>{` ${Runtime}`}</time>
-                  {' - '}
-                  {Genre.split(',').map((item, index) => (
-                    <>
-                      {index % 2 ? <span className='ghost'> | </span> : null}
-                      <span>{item}</span>
-                    </>
-                  ))}
-                </p>
-                <div
-                  className={`${this.props.toggleView ? 'd-none' : ''} outline`}
-                >
-                  {Plot}
-                </div>
-                <div
-                  className={`${
-                    this.props.toggleView ? 'd-none' : ''
-                  } txt-block`}
-                >
-                  <h5 className='inline font-weight-bold'>Director:</h5>
-                  <span>{Director}</span>
-                </div>
-                <div
-                  className={`${
-                    this.props.toggleView ? 'd-none' : ''
-                  } txt-block`}
-                >
-                  <h5 className='inline font-weight-bold'>Stars:</h5>
-                  <span>{Actors}</span>
+                <div className={`${this.props.toggleView ? 'd-none' : ''}`}>
+                  <p className='cert-runtime-genre'>
+                    <time>{` ${Runtime}`}</time>
+                    {' - '}
+                    {Genre.split(',').map((item, index) => (
+                      <>
+                        {index % 2 ? <span className='ghost'> | </span> : null}
+                        <span>{item}</span>
+                      </>
+                    ))}
+                  </p>
+                  <div
+                    className={`${
+                      !this.props.toggleView ? 'd-none' : ''
+                    } outline`}
+                  >
+                    <strong>Plot:</strong> {Plot}
+                  </div>
+                  <div className='txt-block'>
+                    <h5 className='inline font-weight-bold'>Director:</h5>
+                    <span>{Director}</span>
+                  </div>
+                  <div className='txt-block'>
+                    <h5 className='inline font-weight-bold'>Stars:</h5>
+                    <span>{Actors}</span>
+                  </div>
                 </div>
                 <button
                   className='btn btn-sm btn-outline-warning badge-dark badge'

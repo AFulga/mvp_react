@@ -191,7 +191,7 @@ class Mvp extends React.Component {
   };
 
   handleModalClick = movie => {
-    console.log('movie', new Array(movie));
+    //console.log('movie', new Array(movie));
     this.setState({
       showModal: !this.state.showModal,
       clickedMovie: movie ? new Array(movie) : []
@@ -270,6 +270,15 @@ class Mvp extends React.Component {
             >
               {isFavoritePage ? 'Show search list' : 'Show favorites list'}
             </button>
+            <div
+              className={`${
+                currentSearch.length > 0 || favoriteList.length > 0
+                  ? 'visible'
+                  : 'invisible'
+              } font-weight-bold p-1 pt-2 text-success`}
+            >
+              {!isFavoritePage ? 'Search list' : 'Favorites list'}
+            </div>
           </div>
 
           {totalResults ? (
@@ -287,23 +296,33 @@ class Mvp extends React.Component {
                     )}
                   </span>
                 </div>
-                <span
-                  className={`col-4 cursor-pointer ${
+                <div
+                  className={`col-4 d-inline cursor-pointer text-warning ${
                     page === 1 ? 'invisible' : 'visible'
                   }`}
                   title='Previous page'
                 >
-                  <FaArrowCircleLeft onClick={() => this.setPageNumber(-1)} />
-                </span>
-                <div className='col-4 d-inline-block'>{page}</div>
-                <span
-                  className={`col-4  cursor-pointer ${
+                  <FaArrowCircleLeft
+                    onClick={() => this.setPageNumber(-1)}
+                    className='svg-resize'
+                  />
+                </div>
+                <div className='col-4 d-inline'>
+                  <span className='d-inline-block text-info btn btn-outline-light bg-light font-weight-bold p-0 pl-2 pr-2'>
+                    {page}
+                  </span>
+                </div>
+                <div
+                  className={`col-4 d-inline cursor-pointer text-warning ${
                     showNextPageButton ? 'invisible' : 'visible'
                   }`}
                   title='Next page'
                 >
-                  <FaArrowCircleRight onClick={() => this.setPageNumber(1)} />
-                </span>
+                  <FaArrowCircleRight
+                    onClick={() => this.setPageNumber(1)}
+                    className='svg-resize'
+                  />
+                </div>
               </div>
               <div
                 className={`p-1 ${

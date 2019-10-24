@@ -102,3 +102,12 @@ img {
   z-index: 999;
   top: 0;
 }
+
+.modal .d-none {
+  display: initial !important;
+}
+
+.svg-resize {
+  width: 25px !important;
+  height: auto !important;
+}
